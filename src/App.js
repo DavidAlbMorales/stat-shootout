@@ -16,10 +16,8 @@ function App() {
   };
 
   const sendSelectedTeams = () => {
-    // Log the data before sending
     console.log('Sending selected teams:', selectedTeams);
   
-    // Make an HTTP POST request to the backend server
     fetch('http://localhost:8000/', {
       method: 'POST',
       headers: {
@@ -30,16 +28,23 @@ function App() {
     .then(response => {
       if (response.ok) {
         console.log('Selected teams sent successfully!');
-        // Optionally, you can handle success actions here
+        return response.json(); // Parse response body as JSON
       } else {
         throw new Error('Failed to send selected teams');
       }
     })
+    .then(data => {
+      console.log('Received data from backend:', data);
+      // Update your frontend state or perform actions with the received data
+      // For example:
+      // updateStateWithReceivedData(data);
+    })
     .catch(error => {
       console.error('Error sending selected teams:', error);
-      // Optionally, you can handle error actions here
+      // Handle error
     });
-  };  
+  };
+  
 
   return (
     <div>
