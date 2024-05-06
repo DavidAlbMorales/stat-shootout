@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import './App.css';
 import nbaTeams from './nbaTeams.js'; // Import the NBA teams data
+import TeamStatsData from './TeamStats.js'; // Import the TeamStatsData component
 
 function App() {
   const [selectedTeams, setSelectedTeams] = useState([]);
+  const [teamStats, setTeamStats] = useState(null); // State to hold team statistics
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -35,16 +37,13 @@ function App() {
     })
     .then(data => {
       console.log('Received data from backend:', data);
-      // Update your frontend state or perform actions with the received data
-      // For example:
-      // updateStateWithReceivedData(data);
+      setTeamStats(data.team_stats); // Set teamStats state with the received data
     })
     .catch(error => {
       console.error('Error sending selected teams:', error);
       // Handle error
     });
   };
-  
 
   return (
     <div>
@@ -72,7 +71,8 @@ function App() {
         {/* Button to send selected teams to the server */}
         <button onClick={sendSelectedTeams}>Send Selected Teams</button>
       </div>
-      {/* Other components can be added here */}
+      {/* Render TeamStatsData component with teamStats data */}
+      {teamStats && <TeamStatsData teamStats={teamStats} />}
     </div>
   );
 }

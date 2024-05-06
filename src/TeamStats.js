@@ -1,28 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-const TeamStatsData = () => {
-  const [teamStats, setTeamStats] = useState([]);
+const TeamStatsData = ({ teamStats }) => {
   const [winner, setWinner] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/team_stats.json');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        console.log('Fetched team stats data:', data);
-        setTeamStats(data.team_stats);
-        calculateWinner(data.team_stats);
-      } catch (error) {
-        console.error('Error fetching team stats:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-  
+    if (teamStats && teamStats.length === 2) {
+      calculateWinner(teamStats);
+    }
+  }, [teamStats]);
 
   const calculateWinner = (teamStats) => {
     console.log(teamStats);
@@ -54,41 +39,13 @@ const TeamStatsData = () => {
       team2Points++;
     }
 
-  //   const sortedTeam1Roster = teamStats[0]?.team_roster_stats1[0]?.sort((a, b) => b.PIE - a.PIE) ?? [];
-  //   const sortedTeam2Roster = teamStats[1]?.team_roster_stats2[0]?.sort((a, b) => b.PIE - a.PIE) ?? [];
-    
-  //   for (let i = 0; i < 9; i++) {
-  //     const player1 = sortedTeam1Roster[i];
-  //     const player2 = sortedTeam2Roster[i];
-
-  //     if (player1.PTS > player2.PTS) {
-  //       team1Points++;
-  //     } else if (player1.PTS < player2.PTS) {
-  //       team2Points++;
-  //     }
-
-  //     if (player1.REB > player2.REB) {
-  //       team1Points++;
-  //     } else if (player1.REB < player2.REB) {
-  //       team2Points++;
-  //     }
-
-  //     if (player1.AST > player2.AST) {
-  //       team1Points++;
-  //     } else if (player1.AST < player2.AST) {
-  //       team2Points++;
-  //     }
-  // }
-
     // Determine the winner
     let winner = null;
     if (team1Points > team2Points) {
       winner = teamStats[0].TEAM_NAME;
     } else if (team1Points < team2Points) {
       winner = teamStats[1].TEAM_NAME;
-    }
-    else
-    {
+    } else {
       winner = "Tie";
     }
 
