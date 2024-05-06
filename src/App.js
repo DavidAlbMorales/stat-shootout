@@ -10,7 +10,11 @@ function App() {
   const handleDrop = (event) => {
     event.preventDefault();
     const teamName = event.dataTransfer.getData('teamName');
-    setSelectedTeams([...selectedTeams, teamName]);
+
+    // Check if two teams are already selected
+    if (selectedTeams.length < 2 && !selectedTeams.includes(teamName)) {
+      setSelectedTeams([...selectedTeams, teamName]);
+    }
   };
 
   const handleDragOver = (event) => {
@@ -18,31 +22,40 @@ function App() {
   };
 
   const sendSelectedTeams = () => {
-    console.log('Sending selected teams:', selectedTeams);
-  
-    fetch('http://localhost:8000/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ selectedTeams })
-    })
-    .then(response => {
-      if (response.ok) {
-        console.log('Selected teams sent successfully!');
-        return response.json(); // Parse response body as JSON
-      } else {
-        throw new Error('Failed to send selected teams');
-      }
-    })
-    .then(data => {
-      console.log('Received data from backend:', data);
-      setTeamStats(data.team_stats); // Set teamStats state with the received data
-    })
-    .catch(error => {
-      console.error('Error sending selected teams:', error);
-      // Handle error
-    });
+    if (selectedTeams.length === 2) {
+      console.log('Sending selected teams:', selectedTeams);
+
+      fetch('http://localhost:8000/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ selectedTeams })
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log('Selected teams sent successfully!');
+            return response.json(); // Parse response body as JSON
+          } else {
+            throw new Error('Failed to send selected teams');
+          }
+        })
+        .then((data) => {
+          console.log('Received data from backend:', data);
+          setTeamStats(data.team_stats); // Set teamStats state with the received data
+        })
+        .catch((error) => {
+          console.error('Error sending selected teams:', error);
+          // Handle error
+        });
+    } else {
+      console.log('Please select exactly two teams.');
+    }
+  };
+
+  const getTeamInfo = (teamAbbreviation) => {
+    const team = nbaTeams.find((team) => team.abbreviation === teamAbbreviation);
+    return team;
   };
 
   return (
@@ -64,12 +77,24 @@ function App() {
       <div>
         <h2>Selected Teams:</h2>
         <ul>
-          {selectedTeams.map((team, index) => (
-            <li key={index}>{team}</li>
-          ))}
+          {selectedTeams.map((teamAbbreviation, index) => {
+            const teamInfo = getTeamInfo(teamAbbreviation);
+            if (teamInfo) {
+              return (
+                <li key={index}>
+                  <img src={teamInfo.image} alt={teamInfo.name} style={{ width: 30, height: 30, marginRight: 10 }} />
+                  {teamInfo.name}
+                </li>
+              );
+            } else {
+              return null;
+            }
+          })}
         </ul>
         {/* Button to send selected teams to the server */}
-        <button onClick={sendSelectedTeams}>Send Selected Teams</button>
+        {selectedTeams.length === 2 && (
+          <button onClick={sendSelectedTeams}>Send Selected Teams</button>
+        )}
       </div>
       {/* Render TeamStatsData component with teamStats data */}
       {teamStats && <TeamStatsData teamStats={teamStats} />}

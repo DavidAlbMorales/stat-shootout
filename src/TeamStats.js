@@ -54,13 +54,29 @@ const TeamStatsData = ({ teamStats }) => {
 
   return (
     <div>
-      {winner ? (
+    {winner ? (
+      <div>
         <h2>The winner is: {winner}</h2>
-      ) : (
-        <h2>Calculating winner...</h2>
-      )}
-    </div>
-  );
+        <div>
+          <h3>{teamStats[0].TEAM_NAME} Stats:</h3>
+          <p>Points Rank: {teamStats[0].PTS_RANK}</p>
+          <p>Rebounds Rank: {teamStats[0].REB_RANK}</p>
+          <p>Assists Rank: {teamStats[0].AST_RANK}</p>
+          <p>Opponent Points Rank: {teamStats[0].OPP_PTS_RANK}</p>
+        </div>
+        <div>
+          <h3>{teamStats[1].TEAM_NAME} Stats:</h3>
+          <p>Points Rank: {teamStats[1].PTS_RANK}</p>
+          <p>Rebounds Rank: {teamStats[1].REB_RANK}</p>
+          <p>Assists Rank: {teamStats[1].AST_RANK}</p>
+          <p>Opponent Points Rank: {teamStats[1].OPP_PTS_RANK}</p>
+        </div>
+      </div>
+    ) : (
+      <h2>Calculating winner...</h2>
+    )}
+  </div>
+);
 };
 
 export default TeamStatsData;
